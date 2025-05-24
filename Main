@@ -1,0 +1,99 @@
+package Briscola;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner tastiera = new Scanner(System.in);
+        Mazzo mazzo = new Mazzo();
+        Giocatore g1 = new Giocatore();
+        Giocatore bot = new Giocatore();
+        Partita partita = new Partita();
+
+        mazzo.Mescola();
+        partita.distribuisciCarte(mazzo, g1, bot);
+        Carte cartaBriscola = mazzo.pesca();
+
+        System.out.println("\nBenvenuti al gioco della Briscola!");
+        int turno = 0;
+        System.out.println("------------------------------------");
+        System.out.println("La briscola per questa partita è: " + cartaBriscola);
+        System.out.println("Inizia la partita!\n");
+
+        while (!mazzo.MazzoVuoto() || !g1.getMano().isEmpty() || !bot.getMano().isEmpty()) {
+            turno++;
+            System.out.println("\nTURNO N. "+turno+" DEL GIOCATORE:");
+            System.out.println("-------------------");
+            g1.visualizzaMano();
+
+            if (!g1.getMano().isEmpty()) {
+                int numeroCarta;
+                do {
+                    System.out.print("Scegli la carta da giocare (1-" + g1.getMano().size() + "): ");
+                    numeroCarta = tastiera.nextInt();
+                    System.out.println("-------------------");
+                } while (numeroCarta < 1 || numeroCarta > g1.getMano().size());
+
+                Carte cartaGiocataG1 = g1.giocaCarta(numeroCarta);
+                System.out.println("Hai giocato: " + cartaGiocataG1);
+
+                if (!bot.getMano().isEmpty()) {
+                    Carte cartaBot = bot.turnoBot(bot, cartaGiocataG1, cartaBriscola);
+                    System.out.println("Il Bot ha giocato: " + cartaBot);
+
+                    int vincitore = partita.vincitoreMano(cartaGiocataG1, cartaBot, cartaBriscola, g1, bot);
+
+                    if (vincitore == 1) {
+                        g1.prendiCarta(cartaGiocataG1);
+                        g1.prendiCarta(cartaBot);
+                        System.out.println("Hai vinto la mano!");
+                    } else {
+                        bot.prendiCarta(cartaGiocataG1);
+                        bot.prendiCarta(cartaBot);
+                        System.out.println("Il Bot vince la mano!");
+                    }
+
+                    if (!mazzo.MazzoVuoto()) {
+                        if (g1.getMano().size() < 3) {
+                            g1.pescaCarta(mazzo);
+                        }
+                        if (bot.getMano().size() < 3) {
+                            bot.pescaCarta(mazzo);
+                        }
+                    }
+                }
+                System.out.println("Fine del turno.\n");
+            } else {
+                if (!bot.getMano().isEmpty()) {
+                    System.out.println("TURNO DEL BOT:");
+                    Carte cartaBot = bot.turnoBot(bot, null, cartaBriscola);
+                    System.out.println("Il Bot ha giocato: " + cartaBot);
+                    bot.prendiCarta(cartaBot);
+                    if (!mazzo.MazzoVuoto() && bot.getMano().size() < 3) {
+                        bot.pescaCarta(mazzo);
+                    }
+
+                } else {
+                    break;
+                }
+            }
+        }
+
+        int puntiG1 = g1.calcolaPuntiManiPrese();
+        int puntiBot = bot.calcolaPuntiManiPrese();
+
+        System.out.println("PARTITA FINITA!");
+        System.out.println("Punteggio Giocatore 1: " + puntiG1);
+        System.out.println("Punteggio Bot: " + puntiBot);
+
+        if (puntiG1 > puntiBot) {
+            System.out.println("Giocatore 1 vince la partita!");
+        } else if (puntiBot > puntiG1) {
+            System.out.println("Bot vince la partita!");
+        } else {
+            System.out.println("Pareggio!");
+        }
+
+        tastiera.close();
+    }
+}
