@@ -1,0 +1,29 @@
+package Briscola;
+
+public class Carte {
+    public enum Seme {spade, bastoni, coppe, denari}
+    public enum Valore {asso, due, tre, quattro, cinque, sei, sette, fante, cavallo, re}
+
+    private final Seme seme;
+    private final Valore valore;
+    private final int punteggio;
+
+    public Carte(Seme seme, Valore valore, int punteggio) {
+        this.seme = seme;
+        this.valore = valore;
+        this.punteggio = punteggio;
+    }
+
+    public Seme getSeme() {
+        return seme;
+    }
+
+    public int getPunteggio() {
+        return punteggio;
+    }
+
+    @Override
+    public String toString() {
+        return valore + " di " + seme;
+    }
+}
