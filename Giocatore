@@ -1,0 +1,36 @@
+package Briscola;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Mazzo {
+    private final ArrayList<Carte> carte;
+
+    public Mazzo() {
+        carte = new ArrayList<>();
+        Carte.Seme[] semi = Carte.Seme.values();
+        Carte.Valore[] valori = Carte.Valore.values();
+        int[] punteggio = {11, 0, 10, 0, 0, 0, 0, 2, 3, 4};
+
+        for (Carte.Seme seme : semi) {
+            for (int i = 0; i < valori.length; i++) {
+                carte.add(new Carte(seme, valori[i], punteggio[i]));
+            }
+        }
+    }
+
+    public void Mescola() {
+        Collections.shuffle(carte);
+    }
+
+    public Carte pesca() {
+        if (carte.isEmpty()) {
+            return null;
+        }
+        return carte.removeFirst();
+    }
+
+    public boolean MazzoVuoto() {
+        return carte.isEmpty();
+    }
+}
